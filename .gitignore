@@ -2,4 +2,5 @@
 /smsSemProject/nbproject/private/
 /smsSemProject/build/
 /smsSemProject/dist/
-/smsSemProject/smsSemProject/src/conf/persistence.xml
+/smsSemProject/src/conf/persistence.xml
+/smsSemProject/nbproject/project.properties
