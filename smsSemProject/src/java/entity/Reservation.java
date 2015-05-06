@@ -6,7 +6,6 @@
 package entity;
 
 import java.io.Serializable;
-import java.util.List;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -14,19 +13,23 @@ import javax.persistence.Id;
 
 /**
  *
- * @author MS
+ * @author Søren
  */
 @Entity
-public class Flight implements Serializable {
-
+public class Reservation implements Serializable {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private String id;
-
-    private String type;
-    private List<Seat> seats;
-
+    private Customer customer;
+    private Seat seat;
+    
+    public Reservation(){
+        
+    }
+    
+    
+    
     public String getId() {
         return id;
     }
@@ -35,25 +38,10 @@ public class Flight implements Serializable {
         this.id = id;
     }
 
-    public String getType() {
-        return type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
-    public List<Seat> getSeats() {
-        return seats;
-    }
-
-    public void setSeats(List<Seat> seats) {
-        this.seats = seats;
-    }
 
     @Override
     public String toString() {
-        return "entity.Flight[ id=" + id + " ]";
+        return "entity.Reservation[ id=" + id + " ]";
     }
-
+    
 }
