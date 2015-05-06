@@ -15,6 +15,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Temporal;
@@ -24,6 +26,11 @@ import javax.persistence.Temporal;
  * @author MS
  */
 @Entity
+@NamedQueries({
+    @NamedQuery(name = "FlightInstance.findByDates", query = "SELECT f FROM FlightInstance f WHERE f.dateTakeOf BETWEEN :startDate AND :endDate"),
+    @NamedQuery(name = "FlightInstance.findByDatesAndCities", query = "SELECT f FROM FlightInstance f WHERE f.dateTakeOf BETWEEN :startDate AND :endDate AND f.departure = :departure AND"
+            + " f.arrival = :arrival")
+})
 public class FlightInstance implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -43,49 +50,67 @@ public class FlightInstance implements Serializable {
     private List<Seat> flightInstanceSeats;
     @OneToMany(mappedBy = "flightInstance", cascade = CascadeType.PERSIST)
     private List<Reservation> reservations;
+    private String airline;
+
     public FlightInstance() {
     }
 
-    public FlightInstance(Flight flight, Date dateTakeOf, Airport arrival, Airport departure, double price) {
+    public FlightInstance(Flight flight, Date dateTakeOf, Airport depature, Airport arrival, double price, String airline) {
         this.flight = flight;
         this.dateTakeOf = dateTakeOf;
         this.arrival = arrival;
-        this.departure = departure;
+        this.departure = depature;
         this.price = price;
+        this.airline = airline;
         setUpSeats(flight.getSeats());
         this.reservations = new ArrayList<>();
     }
 
-    
-    private void setUpSeats(int seatCount){
+    private void setUpSeats(int seatCount) {
         this.flightInstanceSeats = new ArrayList<>();
         for (int i = 0; i < seatCount; i++) {
             this.flightInstanceSeats.add(new Seat(i));
         }
-        
+
     }
-    
-    
-    
-    public void addReservation(Customer customer, List<Customer> cList){
-        
+
+    public void addReservation(Customer customer, List<Customer> cList) {
+
         List<Seat> tempSeats = new ArrayList<>();
         for (Customer c : cList) {
-            
+
             for (Seat freeSeat : flightInstanceSeats) {
-                if(freeSeat.getCustomer()== null){
+                if (freeSeat.getCustomer() == null) {
                     freeSeat.setCustomer(c);
                     tempSeats.add(freeSeat);
                     System.out.println("test");
                     break;
                 }
             }
-            
+
         }
         reservations.add(new Reservation(customer, tempSeats, this));
-        
+
     }
-    
+
+    public int getFreeSeats() {
+        int counter = 0;
+        for (Seat flightInstanceSeat : flightInstanceSeats) {
+            if (flightInstanceSeat.getCustomer() == null) {
+                counter++;
+            }
+        }
+        return counter;
+    }
+
+    public String getAirline() {
+        return airline;
+    }
+
+    public void setAirline(String airline) {
+        this.airline = airline;
+    }
+
     public String getId() {
         return id;
     }
