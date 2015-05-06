@@ -10,6 +10,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 
 /**
  *
@@ -24,8 +25,20 @@ public class Seat implements Serializable {
     private String id;
 
     private Integer seatNumber;
+    @OneToOne
     private Customer customer;
 
+    public Seat() {
+    }
+
+    public Seat(Integer seatNumber) {
+        this.seatNumber = seatNumber;
+        this.customer = null;
+    }
+
+    
+    
+    
     public String getId() {
         return id;
     }

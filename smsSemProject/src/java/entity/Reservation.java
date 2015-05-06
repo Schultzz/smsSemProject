@@ -6,10 +6,15 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 
 /**
  *
@@ -21,11 +26,23 @@ public class Reservation implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private String id;
+    @OneToOne
     private Customer customer;
-    private Seat seat;
+    @OneToMany(cascade = CascadeType.PERSIST)
+    private List<Seat> seat;
+    @ManyToOne
+    private FlightInstance flightInstance;
+    
+    
     
     public Reservation(){
         
+    }
+
+    public Reservation(Customer customer, List<Seat> tempSeats, FlightInstance flightInstance) {
+        this.customer = customer;
+        this.flightInstance = flightInstance;
+        this.seat = tempSeats;
     }
     
     

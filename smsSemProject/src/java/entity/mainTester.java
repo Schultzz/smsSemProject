@@ -5,7 +5,9 @@
  */
 package entity;
 
-import javax.persistence.EntityManager;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.Persistence;
 /**
@@ -15,17 +17,33 @@ import javax.persistence.Persistence;
 public class mainTester {
     public static void main(String[] args) {
         
-        Customer c = new Customer();
+        
         
         EntityManager em = Persistence.createEntityManagerFactory("smsSemProjectPU").createEntityManager();
+        
+        Flight flight1 = new Flight("Helicopter", 5);
+        
+        Airport airport1 = new Airport("CPH", "Copenhagen");
+        Airport airport2 = new Airport("LON", "London");
+        
+        Customer c1 = new Customer("Per", "Larsen", "Laksevej 1", "SKinkeby", "1111", "Norge");
+        Customer c2 = new Customer("Klavs", "Larsen", "Laksevej 1", "SKinkeby", "1111", "Norge");
+        
+        FlightInstance fi1 = new FlightInstance(flight1, new Date(1993, 2, 2), airport1, airport2, 1337.37);
+        List<Customer> cList = new ArrayList();
+        cList.add(c1);
+        cList.add(c2);
+        fi1.addReservation(c1, cList);
         em.getTransaction().begin();
-        em.persist(c);
+        em.persist(c1);
+        em.persist(c2);
+        em.persist(airport1);
+        em.persist(airport2);
+        em.persist(flight1);
+        em.persist(fi1);
         em.getTransaction().commit();
         
         
-        System.out.println(c.getId());
-        Flight f = new Flight();
-        System.out.println(f.getId());
     }
     
 }

@@ -25,8 +25,17 @@ public class Flight implements Serializable {
     private String id;
 
     private String type;
-    private List<Seat> seats;
+    private Integer seats;
 
+    public Flight() {
+    }
+
+    public Flight(String type, Integer seats) {
+        this.type = type;
+        this.seats = seats;
+    }
+
+    
     public String getId() {
         return id;
     }
@@ -43,11 +52,11 @@ public class Flight implements Serializable {
         this.type = type;
     }
 
-    public List<Seat> getSeats() {
+    public Integer getSeats() {
         return seats;
     }
 
-    public void setSeats(List<Seat> seats) {
+    public void setSeats(Integer seats) {
         this.seats = seats;
     }
 

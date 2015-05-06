@@ -6,12 +6,18 @@
 package entity;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
+import javax.persistence.Temporal;
 
 /**
  *
@@ -24,13 +30,62 @@ public class FlightInstance implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private String id;
-
-    private Date date;
-    private String arrival;
-    private String departure;
+    @ManyToOne
+    private Flight flight;
+    @Temporal(javax.persistence.TemporalType.DATE)
+    private Date dateTakeOf;
+    @OneToOne
+    private Airport arrival;
+    @OneToOne
+    private Airport departure;
     private double price;
-    private List<Seat> freeSeats;
+    @OneToMany(cascade = CascadeType.PERSIST)
+    private List<Seat> flightInstanceSeats;
+    @OneToMany(mappedBy = "flightInstance", cascade = CascadeType.PERSIST)
+    private List<Reservation> reservations;
+    public FlightInstance() {
+    }
 
+    public FlightInstance(Flight flight, Date dateTakeOf, Airport arrival, Airport departure, double price) {
+        this.flight = flight;
+        this.dateTakeOf = dateTakeOf;
+        this.arrival = arrival;
+        this.departure = departure;
+        this.price = price;
+        setUpSeats(flight.getSeats());
+        this.reservations = new ArrayList<>();
+    }
+
+    
+    private void setUpSeats(int seatCount){
+        this.flightInstanceSeats = new ArrayList<>();
+        for (int i = 0; i < seatCount; i++) {
+            this.flightInstanceSeats.add(new Seat(i));
+        }
+        
+    }
+    
+    
+    
+    public void addReservation(Customer customer, List<Customer> cList){
+        
+        List<Seat> tempSeats = new ArrayList<>();
+        for (Customer c : cList) {
+            
+            for (Seat freeSeat : flightInstanceSeats) {
+                if(freeSeat.getCustomer()== null){
+                    freeSeat.setCustomer(c);
+                    tempSeats.add(freeSeat);
+                    System.out.println("test");
+                    break;
+                }
+            }
+            
+        }
+        reservations.add(new Reservation(customer, tempSeats, this));
+        
+    }
+    
     public String getId() {
         return id;
     }
@@ -39,27 +94,35 @@ public class FlightInstance implements Serializable {
         this.id = id;
     }
 
-    public Date getDate() {
-        return date;
+    public Date getDateTakkeOf() {
+        return dateTakeOf;
     }
 
-    public void setDate(Date date) {
-        this.date = date;
+    public void setDateTakkeOf(Date dateTakkeOf) {
+        this.dateTakeOf = dateTakkeOf;
     }
 
-    public String getArrival() {
+    public Flight getFlight() {
+        return flight;
+    }
+
+    public void setFlight(Flight flight) {
+        this.flight = flight;
+    }
+
+    public Airport getArrival() {
         return arrival;
     }
 
-    public void setArrival(String arrival) {
+    public void setArrival(Airport arrival) {
         this.arrival = arrival;
     }
 
-    public String getDeparture() {
+    public Airport getDeparture() {
         return departure;
     }
 
-    public void setDeparture(String departure) {
+    public void setDeparture(Airport departure) {
         this.departure = departure;
     }
 
@@ -71,12 +134,12 @@ public class FlightInstance implements Serializable {
         this.price = price;
     }
 
-    public List<Seat> getFreeSeats() {
-        return freeSeats;
+    public List<Seat> getFlightInstanceSeats() {
+        return flightInstanceSeats;
     }
 
-    public void setFreeSeats(List<Seat> freeSeats) {
-        this.freeSeats = freeSeats;
+    public void setFlightInstanceSeats(List<Seat> freeSeats) {
+        this.flightInstanceSeats = freeSeats;
     }
 
     @Override
