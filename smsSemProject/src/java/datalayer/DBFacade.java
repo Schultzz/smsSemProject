@@ -5,13 +5,20 @@
  */
 package datalayer;
 
+import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import entity.Airport;
+import entity.Customer;
 import entity.FlightInstance;
+import entity.Reservation;
+import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
@@ -138,8 +145,36 @@ public class DBFacade implements DBFacadeInterface {
     }
 
     @Override
-    public String flightReservation(String JSONReservationPayload) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    public String flightReservation(String JSONReservationPayload, String flightId) {
+        em.getTransaction().begin();
+        JsonObject jo = new JsonParser().parse(JSONReservationPayload).getAsJsonObject();
+        JsonArray passengers = jo.getAsJsonArray("Passengers");
+        List<Customer> cList = new ArrayList<>();
+        for (JsonElement passenger : passengers) {
+            JsonObject tempJo = passenger.getAsJsonObject();
+            Customer tempCustomer = new Customer();
+            tempCustomer.setfName(tempJo.get("firstName").getAsString());
+            tempCustomer.setlName(tempJo.get("lastName").getAsString());
+            tempCustomer.setCity(tempJo.get("city").getAsString());
+            tempCustomer.setCountry(tempJo.get("country").getAsString());
+            tempCustomer.setStreet(tempJo.get("street").getAsString());
+            cList.add(tempCustomer);
+            System.out.println(tempCustomer.getfName() + " " + tempCustomer.getCountry());
+            em.persist(tempCustomer);
+        }
+        
+        FlightInstance fInstance = em.find(FlightInstance.class, flightId);
+        
+        
+        em.merge(fInstance);
+        em.getTransaction().commit();
+        
+        JsonObject reservationJo = new JsonObject();
+        reservationJo.addProperty("reservationID", "null");
+        reservationJo.addProperty("flightID", fInstance.getId());//FlightID or flightinstanceID?
+        reservationJo.add("Passengers", passengers);
+        reservationJo.addProperty("totalPrice", fInstance.getPrice());
+        return reservationJo.toString();
     }
 
     @Override

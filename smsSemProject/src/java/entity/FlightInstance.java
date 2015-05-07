@@ -90,7 +90,6 @@ public class FlightInstance implements Serializable {
 
         }
         reservations.add(new Reservation(customer, tempSeats, this));
-
     }
 
     public int getFreeSeats() {
