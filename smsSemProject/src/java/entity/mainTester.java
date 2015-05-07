@@ -30,17 +30,17 @@ public class mainTester {
         Airport airport2 = new Airport("LON", "London");
         Airport airport3 = new Airport("BIL", "Billund");
         Airport airport4 = new Airport("SND", "Soederborg");
-        Airport airport5 = new Airport("FIS", "FISSEH");
+        Airport airport5 = new Airport("FIS", "erttww");
         
         Customer c1 = new Customer("Per", "Larsen", "Laksevej 1", "SKinkeby", "1111", "Norge");
         Customer c2 = new Customer("Klavs", "Larsen", "Laksevej 1", "SKinkeby", "1111", "Norge");
         
         
         SimpleDateFormat df = new SimpleDateFormat(
-                "yyyy mm dd");
+                "yyyy-mm-dd");
         Date sDate = null, eDate = null;
         try {
-            sDate = df.parse("2017 01 05");
+            sDate = df.parse("2017-01-05");
             
 //            long epoch = date.getTime();
 //            System.out.println(date);
@@ -51,6 +51,7 @@ public class mainTester {
         FlightInstance fi1 = new FlightInstance(flight1, sDate, airport1, airport2, 1337.37, "Lyn airlines");
         FlightInstance fi2 = new FlightInstance(flight1, sDate, airport3, airport5, 1337.37, "Lyn airlines");
         FlightInstance fi3 = new FlightInstance(flight1, sDate, airport1, airport4, 1337.37, "Lyn airlines");
+        FlightInstance fi4 = new FlightInstance(flight1, sDate, airport1, airport4, 1000.37, "Lyn airlines");
         List<Customer> cList = new ArrayList();
         cList.add(c1);
         cList.add(c2);
@@ -67,6 +68,7 @@ public class mainTester {
         em.persist(fi1);
         em.persist(fi2);
         em.persist(fi3);
+        em.persist(fi4);
         em.getTransaction().commit();
         
         

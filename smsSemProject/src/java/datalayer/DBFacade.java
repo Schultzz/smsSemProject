@@ -49,7 +49,7 @@ public class DBFacade implements DBFacadeInterface {
     @Override
     public String getFlightsByDates(String startDate, String endDate) {
         SimpleDateFormat df = new SimpleDateFormat(
-                "yyyy mm dd");
+                "yyyy-mm-dd");
         Date sDate = null, eDate = null;
         try {
             sDate = df.parse(startDate);
@@ -100,7 +100,7 @@ public class DBFacade implements DBFacadeInterface {
         Airport endAir = (Airport) q2.getSingleResult();
 
         SimpleDateFormat df = new SimpleDateFormat(
-                "yyyy mm dd");
+                "yyyy-mm-dd");
         Date sDate = null, eDate = null;
         try {
             sDate = df.parse(startDate);

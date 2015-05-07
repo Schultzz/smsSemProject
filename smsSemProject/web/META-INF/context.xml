@@ -1,2 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Context antiJARLocking="true" path="/smsSemProject"/>
+<Context antiJARLocking="true" path="/smsSemProject">
+    <!--<Resource auth="Container" driverClassName="org.apache.derby.jdbc.ClientDriver" maxActive="20" maxIdle="10" maxWait="-1" name="test" password="test" type="javax.sql.DataSource" url="jdbc:derby://localhost:1527/test" username="test"/>-->
+</Context>

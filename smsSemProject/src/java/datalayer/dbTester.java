@@ -17,9 +17,9 @@ public class dbTester {
         
         DBFacade dbf = DBFacade.getInstance();
         
-        System.out.println(dbf.getFlightsByDates("2015 01 02", "2020 01 02"));
+        System.out.println(dbf.getFlightsByDates("2015-01-02", "2020-01-02"));
         
-        System.out.println(dbf.getFligtsByDatesAndAirpots("CPH", "SND", "2015 01 02", "2020 01 02"));
+        System.out.println(dbf.getFligtsByDatesAndAirpots("CPH", "SND", "2015-01-02", "2020-01-02"));
         
         
     }
