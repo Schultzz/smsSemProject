@@ -5,7 +5,6 @@
  */
 package datalayer;
 
-import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -15,7 +14,7 @@ import entity.Airport;
 import entity.Customer;
 import entity.FlightInstance;
 import entity.Reservation;
-import java.lang.reflect.Type;
+import entity.Seat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -183,9 +182,28 @@ public class DBFacade implements DBFacadeInterface {
     public String getReservation(String reservationID) {
         
         Reservation reservation = em.find(Reservation.class, reservationID);
+        JsonArray passengerArray = new JsonArray();
+        JsonObject tempPassenger;
+        Customer customer;
+        for (Seat seat : reservation.getSeat()) {
+            customer = seat.getCustomer();
+            tempPassenger = new JsonObject();
+            tempPassenger.addProperty("firstName", customer.getfName());
+            tempPassenger.addProperty("lastName", customer.getlName());
+            tempPassenger.addProperty("city", customer.getCity());
+            tempPassenger.addProperty("country", customer.getCountry());
+            tempPassenger.addProperty("street", customer.getStreet());
+            passengerArray.add(tempPassenger);
+        }
+        
+        JsonObject reservationJo = new JsonObject();
+        reservationJo.addProperty("reservationID", reservation.getId());
+        reservationJo.addProperty("flightID", reservation.getFlightInstance().getId());
+        reservationJo.addProperty("Passengers", passengerArray.toString());
+        reservationJo.addProperty("totalPrice", reservation.getFlightInstance().getPrice());
         
         
-        return "";
+        return reservationJo.toString();
     }
 
     @Override

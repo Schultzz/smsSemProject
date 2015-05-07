@@ -46,6 +46,30 @@ public class Reservation implements Serializable {
         this.flightInstance = flightInstance;
         this.seat = tempSeats;
     }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
+    public List<Seat> getSeat() {
+        return seat;
+    }
+
+    public void setSeat(List<Seat> seat) {
+        this.seat = seat;
+    }
+
+    public FlightInstance getFlightInstance() {
+        return flightInstance;
+    }
+
+    public void setFlightInstance(FlightInstance flightInstance) {
+        this.flightInstance = flightInstance;
+    }
     
     
     
