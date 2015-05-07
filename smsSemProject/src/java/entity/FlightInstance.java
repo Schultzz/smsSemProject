@@ -48,7 +48,7 @@ public class FlightInstance implements Serializable {
     private double price;
     @OneToMany(cascade = CascadeType.PERSIST)
     private List<Seat> flightInstanceSeats;
-    @OneToMany(mappedBy = "flightInstance", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "flightInstance", cascade = CascadeType.ALL)
     private List<Reservation> reservations;
     private String airline;
 
@@ -74,7 +74,7 @@ public class FlightInstance implements Serializable {
 
     }
 
-    public void addReservation(Customer customer, List<Customer> cList) {
+    public Reservation addReservation(Customer customer, List<Customer> cList) {
 
         List<Seat> tempSeats = new ArrayList<>();
         for (Customer c : cList) {
@@ -83,13 +83,14 @@ public class FlightInstance implements Serializable {
                 if (freeSeat.getCustomer() == null) {
                     freeSeat.setCustomer(c);
                     tempSeats.add(freeSeat);
-                    System.out.println("test");
                     break;
                 }
             }
 
         }
-        reservations.add(new Reservation(customer, tempSeats, this));
+        Reservation newReservation = new Reservation(customer, tempSeats, this);
+        reservations.add(newReservation);
+        return newReservation;
     }
 
     public int getFreeSeats() {

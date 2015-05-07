@@ -146,6 +146,7 @@ public class DBFacade implements DBFacadeInterface {
 
     @Override
     public String flightReservation(String JSONReservationPayload, String flightId) {
+        
         em.getTransaction().begin();
         JsonObject jo = new JsonParser().parse(JSONReservationPayload).getAsJsonObject();
         JsonArray passengers = jo.getAsJsonArray("Passengers");
@@ -159,18 +160,19 @@ public class DBFacade implements DBFacadeInterface {
             tempCustomer.setCountry(tempJo.get("country").getAsString());
             tempCustomer.setStreet(tempJo.get("street").getAsString());
             cList.add(tempCustomer);
-            System.out.println(tempCustomer.getfName() + " " + tempCustomer.getCountry());
             em.persist(tempCustomer);
         }
         
         FlightInstance fInstance = em.find(FlightInstance.class, flightId);
-        
-        
+        Reservation reservation = fInstance.addReservation(cList.get(0), cList);
+        em.persist(reservation);//should work without this?
         em.merge(fInstance);
         em.getTransaction().commit();
         
+        
+        //Setting up the reservationobject to return as JSON
         JsonObject reservationJo = new JsonObject();
-        reservationJo.addProperty("reservationID", "null");
+        reservationJo.addProperty("reservationID", reservation.getId());
         reservationJo.addProperty("flightID", fInstance.getId());//FlightID or flightinstanceID?
         reservationJo.add("Passengers", passengers);
         reservationJo.addProperty("totalPrice", fInstance.getPrice());
@@ -179,7 +181,11 @@ public class DBFacade implements DBFacadeInterface {
 
     @Override
     public String getReservation(String reservationID) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        
+        Reservation reservation = em.find(Reservation.class, reservationID);
+        
+        
+        return "";
     }
 
     @Override
