@@ -13,6 +13,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 
@@ -43,6 +45,30 @@ public class Reservation implements Serializable {
         this.customer = customer;
         this.flightInstance = flightInstance;
         this.seat = tempSeats;
+    }
+
+    public Customer getCustomer() {
+        return customer;
+    }
+
+    public void setCustomer(Customer customer) {
+        this.customer = customer;
+    }
+
+    public List<Seat> getSeat() {
+        return seat;
+    }
+
+    public void setSeat(List<Seat> seat) {
+        this.seat = seat;
+    }
+
+    public FlightInstance getFlightInstance() {
+        return flightInstance;
+    }
+
+    public void setFlightInstance(FlightInstance flightInstance) {
+        this.flightInstance = flightInstance;
     }
     
     

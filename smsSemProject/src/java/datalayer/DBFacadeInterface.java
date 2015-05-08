@@ -15,7 +15,7 @@ public interface DBFacadeInterface {
     
     public String getFlightsByDates(String startDate, String endDate);
     public String getFligtsByDatesAndAirpots(String startAiport, String endAiport, String startDate, String endDate);
-    public String flightReservation(String JSONReservationPayload);
+    public String flightReservation(String JSONReservationPayload, String flightId);
     public String getReservation(String reservationID);
     public String deleteReservationById(String reservationID);
 }

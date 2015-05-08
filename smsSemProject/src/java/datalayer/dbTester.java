@@ -17,11 +17,13 @@ public class dbTester {
         
         DBFacade dbf = DBFacade.getInstance();
         
-        System.out.println(dbf.getFlightsByDates("2015-01-02", "2020-01-02"));
-        
-        System.out.println(dbf.getFligtsByDatesAndAirpots("CPH", "SND", "2015-01-02", "2020-01-02"));
-        
-        
+//        System.out.println(dbf.getFlightsByDates("2015-01-02", "2020-01-02"));
+//        
+//        System.out.println(dbf.getFligtsByDatesAndAirpots("CPH", "SND", "2015-01-02", "2020-01-02"));
+//        
+//        System.out.println(dbf.flightReservation("{'Passengers' : [{'firstName': 'Per', 'lastName' : 'Larsen', 'city' : '123By', 'country' : 'Okland', 'street' : 'asdvej' }, {'firstName': 'ASD', 'lastName' : 'ASDPER', 'city' : '567By', 'country' : 'IkkeOkLand', 'street' : 'test test tets' }]}", "22"));
+//        
+        System.out.println(dbf.getReservation("103"));
     }
     
 }
