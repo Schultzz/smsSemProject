@@ -27,8 +27,8 @@ import javax.persistence.Temporal;
  */
 @Entity
 @NamedQueries({
-    @NamedQuery(name = "FlightInstance.findByDates", query = "SELECT f FROM FlightInstance f WHERE f.dateTakeOf BETWEEN :startDate AND :endDate"),
-    @NamedQuery(name = "FlightInstance.findByDatesAndCities", query = "SELECT f FROM FlightInstance f WHERE f.dateTakeOf BETWEEN :startDate AND :endDate AND f.departure = :departure AND"
+    @NamedQuery(name = "FlightInstance.findByDates", query = "SELECT f FROM FlightInstance f WHERE f.dateTakeOf = :startDate AND f.departure = :startAirport"),
+    @NamedQuery(name = "FlightInstance.findByDatesAndCities", query = "SELECT f FROM FlightInstance f WHERE f.dateTakeOf = :startDate AND f.departure = :departure AND"
             + " f.arrival = :arrival")
 })
 public class FlightInstance implements Serializable {

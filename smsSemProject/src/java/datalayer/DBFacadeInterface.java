@@ -13,8 +13,8 @@ import java.util.Date;
  */
 public interface DBFacadeInterface {
     
-    public String getFlightsByDates(String startDate, String endDate);
-    public String getFligtsByDatesAndAirpots(String startAiport, String endAiport, String startDate, String endDate);
+    public String getFlightsByDates(String startAirport, String startDate);
+    public String getFligtsByDatesAndAirpots(String startAiport, String endAiport, String startDate);
     public String flightReservation(String JSONReservationPayload, String flightId);
     public String getReservation(String reservationID);
     public String deleteReservationById(String reservationID);

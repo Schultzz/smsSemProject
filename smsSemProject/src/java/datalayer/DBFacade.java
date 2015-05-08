@@ -15,6 +15,7 @@ import entity.Customer;
 import entity.FlightInstance;
 import entity.Reservation;
 import entity.Seat;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -53,20 +54,34 @@ public class DBFacade implements DBFacadeInterface {
     }
 
     @Override
-    public String getFlightsByDates(String startDate, String endDate) {
-        SimpleDateFormat df = new SimpleDateFormat(
+    public String getFlightsByDates(String startAirport, String startDate) {
+        long milidate = Long.parseLong(startDate);
+
+        Date date = new Date(milidate);
+
+        DateFormat df = new SimpleDateFormat(
                 "yyyy-mm-dd");
-        Date sDate = null, eDate = null;
+
+        System.out.println(df.format(date));
+        Date test = new Date();
         try {
-            sDate = df.parse(startDate);
-            eDate = df.parse(endDate);
+            test = df.parse(df.format(date));
         } catch (ParseException ex) {
             Logger.getLogger(DBFacade.class.getName()).log(Level.SEVERE, null, ex);
         }
 
+        //Start airport
+        Query q1 = em.createNamedQuery("Airport.findAirportByCode");
+
+        q1.setParameter("code", startAirport);
+
+        Airport startAir = (Airport) q1.getSingleResult();
+
+        System.out.println("date test " + test);
+
         Query q = em.createNamedQuery("FlightInstance.findByDates");
-        q.setParameter("startDate", sDate, TemporalType.DATE);
-        q.setParameter("endDate", eDate, TemporalType.DATE);
+        q.setParameter("startDate", test, TemporalType.DATE);
+        q.setParameter("startAirport", startAir);
 
         List<FlightInstance> fInstanceList = (List<FlightInstance>) q.getResultList();
 
@@ -90,7 +105,7 @@ public class DBFacade implements DBFacadeInterface {
     }
 
     @Override
-    public String getFligtsByDatesAndAirpots(String startAirport, String endAirport, String startDate, String endDate) {
+    public String getFligtsByDatesAndAirpots(String startAirport, String endAirport, String startDate) {
         //Start airport
         Query q1 = em.createNamedQuery("Airport.findAirportByCode");
 
@@ -105,20 +120,24 @@ public class DBFacade implements DBFacadeInterface {
 
         Airport endAir = (Airport) q2.getSingleResult();
 
-        SimpleDateFormat df = new SimpleDateFormat(
+        long milidate = Long.parseLong(startDate);
+
+        Date date = new Date(milidate);
+
+        DateFormat df = new SimpleDateFormat(
                 "yyyy-mm-dd");
-        Date sDate = null, eDate = null;
+
+        System.out.println(df.format(date));
+        Date test = new Date();
         try {
-            sDate = df.parse(startDate);
-            eDate = df.parse(endDate);
+            test = df.parse(df.format(date));
         } catch (ParseException ex) {
             Logger.getLogger(DBFacade.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         Query q = em.createNamedQuery("FlightInstance.findByDatesAndCities");
 
-        q.setParameter("startDate", sDate);
-        q.setParameter("endDate", eDate);
+        q.setParameter("startDate", test);
         q.setParameter("departure", startAir);
         q.setParameter("arrival", endAir);
 

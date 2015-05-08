@@ -66,7 +66,7 @@ public class Rest {
             @PathParam("endAirport") String endAirport, @PathParam("sDate") String sDate, @PathParam("eDate") String eDate) {
         //Date format:  "yyyy.mm.dd"
         //Airport codes are made uppercase to match the database
-        return dbf.getFligtsByDatesAndAirpots(startAirport.toUpperCase(), endAirport.toUpperCase(), sDate, eDate);
+        return dbf.getFligtsByDatesAndAirpots(startAirport.toUpperCase(), endAirport.toUpperCase(), sDate);
     }
 
     /**
