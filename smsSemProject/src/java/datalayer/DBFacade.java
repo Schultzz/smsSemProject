@@ -97,7 +97,7 @@ public class DBFacade implements DBFacadeInterface {
         q1.setParameter("code", startAirport);
 
         Airport startAir = (Airport) q1.getSingleResult();
-        
+
         //end airport
         Query q2 = em.createNamedQuery("Airport.findAirportByCode");
 
@@ -145,7 +145,7 @@ public class DBFacade implements DBFacadeInterface {
 
     @Override
     public String flightReservation(String JSONReservationPayload, String flightId) {
-        
+
         em.getTransaction().begin();
         JsonObject jo = new JsonParser().parse(JSONReservationPayload).getAsJsonObject();
         JsonArray passengers = jo.getAsJsonArray("Passengers");
@@ -161,14 +161,13 @@ public class DBFacade implements DBFacadeInterface {
             cList.add(tempCustomer);
             em.persist(tempCustomer);
         }
-        
+
         FlightInstance fInstance = em.find(FlightInstance.class, flightId);
         Reservation reservation = fInstance.addReservation(cList.get(0), cList);
         em.persist(reservation);//should work without this?
         em.merge(fInstance);
         em.getTransaction().commit();
-        
-        
+
         //Setting up the reservationobject to return as JSON
         JsonObject reservationJo = new JsonObject();
         reservationJo.addProperty("reservationID", reservation.getId());
@@ -180,7 +179,7 @@ public class DBFacade implements DBFacadeInterface {
 
     @Override
     public String getReservation(String reservationID) {
-        
+
         Reservation reservation = em.find(Reservation.class, reservationID);
         JsonArray passengerArray = new JsonArray();
         JsonObject tempPassenger;
@@ -195,20 +194,74 @@ public class DBFacade implements DBFacadeInterface {
             tempPassenger.addProperty("street", customer.getStreet());
             passengerArray.add(tempPassenger);
         }
-        
+
         JsonObject reservationJo = new JsonObject();
         reservationJo.addProperty("reservationID", reservation.getId());
         reservationJo.addProperty("flightID", reservation.getFlightInstance().getId());
         reservationJo.addProperty("Passengers", passengerArray.toString());
         reservationJo.addProperty("totalPrice", reservation.getFlightInstance().getPrice());
-        
-        
+
         return reservationJo.toString();
     }
 
     @Override
     public String deleteReservationById(String reservationID) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+
+        em.getTransaction().begin();
+
+        Query q = em.createNamedQuery("Reservation.getReservation");
+
+        q.setParameter("resId", reservationID);
+
+        Reservation reservation = (Reservation) q.getSingleResult();
+
+        int totalPriceCounterMlg = 0;
+
+        JsonObject jo = new JsonObject();
+        jo.addProperty("reservationID", reservation.getId());
+        jo.addProperty("flightID", reservation.getFlightInstance().getId());
+        JsonArray jsonList = new JsonArray();
+        for (Seat seat : reservation.getSeat()) {
+            JsonObject passJsonObject = new JsonObject();
+            passJsonObject.addProperty("firstName", seat.getCustomer().getfName());
+            passJsonObject.addProperty("lastName", seat.getCustomer().getlName());
+            passJsonObject.addProperty("city", seat.getCustomer().getCity());
+            passJsonObject.addProperty("country", seat.getCustomer().getCountry());
+            passJsonObject.addProperty("street", seat.getCustomer().getStreet());
+            jsonList.add(passJsonObject);
+            // to calculate totalprice
+            totalPriceCounterMlg++;
+        }
+        jo.add("Passengers", jsonList);
+
+        //Multiplyes the count of passengers on same resevation with the price
+        double totalPrice = (reservation.getFlightInstance().getPrice() * totalPriceCounterMlg);
+
+        jo.addProperty("totalPrice", totalPrice);
+
+        //Removes the passengers from the seat, by setting them null
+        for (Seat seat : reservation.getSeat()) {
+            seat.setCustomer(null);
+        }
+
+        //merginen the new changes
+        em.merge(reservation);
+
+        //Removing the reservation from the database
+        Query query = em.createQuery("DELETE FROM Reservation r WHERE r.id = :id");
+
+        query.setParameter("id", reservationID);
+
+        int deleted = query.executeUpdate();
+
+        em.getTransaction().commit();
+
+        if (deleted >= 1) {
+            System.out.println(deleted + " deleted!");
+            return jo.toString();
+        }
+
+        return "'error':'intet at slettet'";
     }
 
 }

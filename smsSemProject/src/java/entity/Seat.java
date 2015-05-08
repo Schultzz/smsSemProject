@@ -65,7 +65,9 @@ public class Seat implements Serializable {
 
     @Override
     public String toString() {
-        return "entity.Seat[ id=" + id + " ]";
+        return "Seat{" + "id=" + id + ", seatNumber=" + seatNumber + ", customer=" + customer + '}';
     }
+
+  
 
 }

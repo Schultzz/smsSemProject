@@ -38,16 +38,16 @@ public class Rest {
     /**
      * Retrieves any given flight within the date given in the input params
      *
-     * @param startDate
-     * @param endDate
+     * @param sAirport
+     * @param date
      * @return an JSON object with all the flighs found
      */
     @GET
     @Produces("application/json")
-    @Path("/{startDate}/{endDate}")
-    public String getAllFlights(@PathParam("startDate") String startDate, @PathParam("endDate") String endDate) {
+    @Path("/{startAirport}/{date}")
+    public String getAllFlights(@PathParam("startAirport") String sAirport, @PathParam("date") String date) {
         //Date format:  "yyyy.mm.dd"
-        return dbf.getFlightsByDates(startDate, endDate);
+        return dbf.getFlightsByDates(sAirport, date);
     }
 
     /**
@@ -79,22 +79,22 @@ public class Rest {
     @Produces("application/json")
     @Path("/{reservationId}")
     public String getReservation(@PathParam("reservationId") String reservationId) {
-
-        return reservationId;
+        return dbf.getReservation(reservationId);
     }
 
     /**
      * Consumes a ReservationPayload object
      *
      * @param content
+     * @param fId
      * @return a Reservation JSON object
      */
     @POST
     @Consumes("application/json")
     @Produces("application/json")
     @Path("/{flightId}")
-    public String addPerson(String content) {
-        return content;
+    public String addPerson(String content, @PathParam("flightId") String fId) {
+        return dbf.flightReservation(content, fId);
     }
 
     /**
@@ -108,6 +108,6 @@ public class Rest {
     @Consumes("application/json")
     @Produces("application/json")
     public String deletePerson(String content) {
-        return content;
+        return dbf.deleteReservationById(content);
     }
 }

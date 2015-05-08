@@ -105,7 +105,9 @@ public class Customer implements Serializable {
 
     @Override
     public String toString() {
-        return "entity.Customer[ id=" + id + " ]";
+        return "Customer{" + "id=" + id + ", fName=" + fName + ", lName=" + lName + ", street=" + street + ", city=" + city + ", zip=" + zip + ", country=" + country + '}';
     }
+
+
     
 }
