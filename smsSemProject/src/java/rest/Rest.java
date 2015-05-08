@@ -61,9 +61,9 @@ public class Rest {
      */
     @GET
     @Produces("application/json")
-    @Path("/{startAirport}/{endAirport}/{sDate}/{eDate}")
+    @Path("/{startAirport}/{endAirport}/{sDate}")
     public String getAllFlightsFromRoutes(@PathParam("startAirport") String startAirport,
-            @PathParam("endAirport") String endAirport, @PathParam("sDate") String sDate, @PathParam("eDate") String eDate) {
+            @PathParam("endAirport") String endAirport, @PathParam("sDate") String sDate) {
         //Date format:  "yyyy.mm.dd"
         //Airport codes are made uppercase to match the database
         return dbf.getFligtsByDatesAndAirpots(startAirport.toUpperCase(), endAirport.toUpperCase(), sDate);
