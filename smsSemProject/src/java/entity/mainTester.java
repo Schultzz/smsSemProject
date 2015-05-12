@@ -48,9 +48,9 @@ public class mainTester {
         }
         
         
-        FlightInstance fi1 = new FlightInstance(flight1, sDate, airport1, airport2, 1337.37, "Lyn airlines");
-        FlightInstance fi2 = new FlightInstance(flight1, sDate, airport3, airport5, 1337.37, "Lyn airlines");
-        FlightInstance fi3 = new FlightInstance(flight1, sDate, airport1, airport4, 1337.37, "Lyn airlines");
+        FlightInstance fi1 = new FlightInstance(flight1, sDate, airport1, airport2, 1337.37, "ASD");
+        FlightInstance fi2 = new FlightInstance(flight1, sDate, airport3, airport5, 1337.37, "DSA airlines");
+        FlightInstance fi3 = new FlightInstance(flight1, sDate, airport1, airport4, 1337.37, "FFn airlines");
         FlightInstance fi4 = new FlightInstance(flight1, sDate, airport1, airport4, 1000.37, "Lyn airlines");
         List<Customer> cList = new ArrayList();
         cList.add(c1);

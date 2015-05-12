@@ -217,7 +217,7 @@ public class DBFacade implements DBFacadeInterface {
         JsonObject reservationJo = new JsonObject();
         reservationJo.addProperty("reservationID", reservation.getId());
         reservationJo.addProperty("flightID", reservation.getFlightInstance().getId());
-        reservationJo.addProperty("Passengers", passengerArray.toString());
+        reservationJo.add("Passengers", passengerArray);
         reservationJo.addProperty("totalPrice", reservation.getFlightInstance().getPrice());
 
         return reservationJo.toString();
