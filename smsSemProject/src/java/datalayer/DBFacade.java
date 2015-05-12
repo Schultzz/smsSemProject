@@ -192,7 +192,7 @@ public class DBFacade implements DBFacadeInterface {
         reservationJo.addProperty("reservationID", reservation.getId());
         reservationJo.addProperty("flightID", fInstance.getId());//FlightID or flightinstanceID?
         reservationJo.add("Passengers", passengers);
-        reservationJo.addProperty("totalPrice", fInstance.getPrice());
+        reservationJo.addProperty("totalPrice", fInstance.getPrice()*passengers.size());
         return reservationJo.toString();
     }
 
@@ -218,7 +218,7 @@ public class DBFacade implements DBFacadeInterface {
         reservationJo.addProperty("reservationID", reservation.getId());
         reservationJo.addProperty("flightID", reservation.getFlightInstance().getId());
         reservationJo.add("Passengers", passengerArray);
-        reservationJo.addProperty("totalPrice", reservation.getFlightInstance().getPrice());
+        reservationJo.addProperty("totalPrice", reservation.getFlightInstance().getPrice()*passengerArray.size());
 
         return reservationJo.toString();
     }
