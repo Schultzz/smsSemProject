@@ -44,13 +44,66 @@ public class RestAPITest {
 
     private SimpleDateFormat df;
     private Gson gson;
-    private EntityManager em;
+    private static EntityManager em;
 
     public RestAPITest() {
+        
     }
 
     @BeforeClass
     public static void setUpClass() {
+        
+        em = Persistence.createEntityManagerFactory("smsSemProjectPU").createEntityManager();
+        
+        Flight flight1 = new Flight("Helicopter", 5);
+
+        Airport airport1 = new Airport("CPH", "Copenhagen");
+        Airport airport2 = new Airport("LON", "London");
+        Airport airport3 = new Airport("BIL", "Billund");
+        Airport airport4 = new Airport("SND", "Soederborg");
+        Airport airport5 = new Airport("FIS", "erttww");
+
+        Customer c1 = new Customer("Per", "Larsen", "Laksevej 1", "SKinkeby", "1111", "Norge");
+        Customer c2 = new Customer("Klavs", "Larsen", "Laksevej 1", "SKinkeby", "1111", "Norge");
+
+        SimpleDateFormat df = new SimpleDateFormat(
+                "yyyy-mm-dd");
+        Date sDate1 = null, eDate1 = null;
+        Date sDate2 = null, eDate2 = null;
+        Date sDate3 = null, eDate3 = null;
+        try {
+            sDate1 = df.parse("2017-01-05");
+            sDate2 = df.parse("2011-01-05");
+            sDate3 = df.parse("2012-01-05");
+
+//            long epoch = date.getTime();
+//            System.out.println(date);
+        } catch (ParseException ex) {
+        }
+
+        FlightInstance fi1 = new FlightInstance(flight1, sDate1, airport1, airport2, 1337.37, "Lyn airlines");
+        FlightInstance fi2 = new FlightInstance(flight1, sDate2, airport3, airport5, 1337.37, "Lyn airlines");
+        FlightInstance fi3 = new FlightInstance(flight1, sDate2, airport1, airport4, 1337.37, "Lyn airlines");
+        FlightInstance fi4 = new FlightInstance(flight1, sDate3, airport1, airport4, 1000.37, "Lyn airlines");
+        List<Customer> cList = new ArrayList();
+        cList.add(c1);
+        cList.add(c2);
+        fi1.addReservation(c1, cList);
+        em.getTransaction().begin();
+        em.persist(c1);
+        em.persist(c2);
+        em.persist(airport1);
+        em.persist(airport2);
+        em.persist(airport3);
+        em.persist(airport4);
+        em.persist(airport5);
+        em.persist(flight1);
+        em.persist(fi1);
+        em.persist(fi2);
+        em.persist(fi3);
+        em.persist(fi4);
+        em.getTransaction().commit();
+        
     }
 
     @AfterClass
@@ -62,12 +115,15 @@ public class RestAPITest {
         SimpleDateFormat df = new SimpleDateFormat(
                 "yyyy-mm-dd");
 
-        setUpData();
-
+        //setUpData();
+        
+        //Start a new transaction
+        em.getTransaction().begin();
     }
 
     @After
-    public void tearDown() {
+    public void tearDown() {        
+        em.getTransaction().rollback();
     }
 
     // TODO add test methods here.
@@ -87,12 +143,12 @@ public class RestAPITest {
 //            Logger.getLogger(RestAPITest.class.getName()).log(Level.SEVERE, null, ex);
 //        }
         try {
-            //Change the API path in future version due to API change
+            //Change the API path in future version due to API change 2011-01-05
             String temp = makeHttpConnection("http://localhost:8084/smsSemProject/api/flights/2011-01-05/2011-01-05", "GET");
             JsonArray ja = new JsonParser().parse(temp).getAsJsonArray();
             
-            System.out.println("Method 1:" + ja.size());
-            assertTrue(ja.size() == 1);
+            System.out.println("testAPIFlightsDatePath(): " + ja.size());
+            assertTrue(ja.size() == 2);
 
             JsonObject temp1 = ja.get(0).getAsJsonObject();
 
@@ -114,8 +170,8 @@ public class RestAPITest {
             String temp = makeHttpConnection("http://localhost:8084/smsSemProject/api/flights/2017-01-05/2017-01-05", "GET");
             
             JsonArray ja = new JsonParser().parse(temp).getAsJsonArray();
-
-            assertTrue(ja.size() == 2);
+            System.out.println("testAPIFlightsReservation() :" + ja.size());
+            assertTrue(ja.size() == 1);
             
         } catch (Exception ex) {
             Logger.getLogger(RestAPITest.class.getName()).log(Level.SEVERE, null, ex);
@@ -155,56 +211,10 @@ public class RestAPITest {
     }
 
     private void setUpData() {
-        em = Persistence.createEntityManagerFactory("smsSemProjectPU").createEntityManager();
         
-        Flight flight1 = new Flight("Helicopter", 5);
-
-        Airport airport1 = new Airport("CPH", "Copenhagen");
-        Airport airport2 = new Airport("LON", "London");
-        Airport airport3 = new Airport("BIL", "Billund");
-        Airport airport4 = new Airport("SND", "Soederborg");
-        Airport airport5 = new Airport("FIS", "erttww");
-
-        Customer c1 = new Customer("Per", "Larsen", "Laksevej 1", "SKinkeby", "1111", "Norge");
-        Customer c2 = new Customer("Klavs", "Larsen", "Laksevej 1", "SKinkeby", "1111", "Norge");
-
-        SimpleDateFormat df = new SimpleDateFormat(
-                "yyyy-mm-dd");
-        Date sDate1 = null, eDate1 = null;
-        Date sDate2 = null, eDate2 = null;
-        Date sDate3 = null, eDate3 = null;
-        try {
-            sDate1 = df.parse("2017-01-05");
-            sDate2 = df.parse("2011-01-05");
-            sDate3 = df.parse("2012-01-05");
-
-//            long epoch = date.getTime();
-//            System.out.println(date);
-        } catch (ParseException ex) {
-        }
-
-        FlightInstance fi1 = new FlightInstance(flight1, sDate1, airport1, airport2, 1337.37, "Lyn airlines");
-        FlightInstance fi2 = new FlightInstance(flight1, sDate2, airport3, airport5, 1337.37, "Lyn airlines");
-        FlightInstance fi3 = new FlightInstance(flight1, sDate3, airport1, airport4, 1337.37, "Lyn airlines");
-        FlightInstance fi4 = new FlightInstance(flight1, sDate1, airport1, airport4, 1000.37, "Lyn airlines");
-        List<Customer> cList = new ArrayList();
-        cList.add(c1);
-        cList.add(c2);
-        fi1.addReservation(c1, cList);
-        em.getTransaction().begin();
-        em.persist(c1);
-        em.persist(c2);
-        em.persist(airport1);
-        em.persist(airport2);
-        em.persist(airport3);
-        em.persist(airport4);
-        em.persist(airport5);
-        em.persist(flight1);
-        em.persist(fi1);
-        em.persist(fi2);
-        em.persist(fi3);
-        em.persist(fi4);
-        em.getTransaction().commit();
+        
+        
+        
 
     }
 
