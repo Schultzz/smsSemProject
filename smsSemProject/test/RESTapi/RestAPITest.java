@@ -47,14 +47,14 @@ public class RestAPITest {
     private static EntityManager em;
 
     public RestAPITest() {
-        
+
     }
 
     @BeforeClass
     public static void setUpClass() {
-        
+
         em = Persistence.createEntityManagerFactory("smsSemProjectPU").createEntityManager();
-        
+
         Flight flight1 = new Flight("Helicopter", 5);
 
         Airport airport1 = new Airport("CPH", "Copenhagen");
@@ -103,7 +103,7 @@ public class RestAPITest {
         em.persist(fi3);
         em.persist(fi4);
         em.getTransaction().commit();
-        
+
     }
 
     @AfterClass
@@ -116,13 +116,12 @@ public class RestAPITest {
                 "yyyy-mm-dd");
 
         //setUpData();
-        
         //Start a new transaction
         em.getTransaction().begin();
     }
 
     @After
-    public void tearDown() {        
+    public void tearDown() {
         em.getTransaction().rollback();
     }
 
@@ -132,52 +131,44 @@ public class RestAPITest {
     // @Test
     // public void hello() {}
     @Test
-    public void testAPIFlightsDatePath() {
+    public void testApiGetAllFlightsAmount0() throws Exception {
         Date sDate1 = null;
         Date sDate2 = null;
 
+        JsonObject temp1;
 //        try {
 //            sDate1 = df.parse("2011-01-05");
 //            sDate2 = df.parse("2011-01-05");
 //        } catch (ParseException ex) {
 //            Logger.getLogger(RestAPITest.class.getName()).log(Level.SEVERE, null, ex);
 //        }
-        try {
-            //Change the API path in future version due to API change 2011-01-05
-            String temp = makeHttpConnection("http://localhost:8084/smsSemProject/api/flights/2011-01-05/2011-01-05", "GET");
-            JsonArray ja = new JsonParser().parse(temp).getAsJsonArray();
-            
-            System.out.println("testAPIFlightsDatePath(): " + ja.size());
-            assertTrue(ja.size() == 2);
+        //Change the API path in future version due to API change 2011-01-05
+        String temp = makeHttpConnection("http://localhost:8084/smsSemProject/api/flights/CPH/1294182000000", "GET");
+        JsonArray ja = new JsonParser().parse(temp).getAsJsonArray();
 
-            JsonObject temp1 = ja.get(0).getAsJsonObject();
+        //System.out.println("testAPIFlightsDatePath(): " + ja.size());
+        assertTrue(ja.size() == 1);
 
-            assertTrue(temp1.get("takeOffDate").getAsString().equals("1294182000000"));
-            assertTrue(temp1.get("landingDate").getAsString().equals("1294182000000"));
-            assertTrue(temp1.get("price").getAsString().equals("1337.37"));
-            assertTrue(temp1.get("airline").getAsString().equals("Lyn airlines"));
+        temp1 = ja.get(0).getAsJsonObject();
 
-        } catch (Exception ex) {
-            Logger.getLogger(RestAPITest.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        assertTrue(temp1.get("takeOffDate").getAsString().equals("1294182000000"));
+        assertTrue(temp1.get("landingDate").getAsString().equals("1294182000000"));
+        assertTrue(temp1.get("price").getAsString().equals("1337.37"));
+        assertTrue(temp1.get("airline").getAsString().equals("Lyn airlines"));
 
     }
 
     @Test
-    public void testAPIFlightsReservation(){
+    public void testApiGetAllFlightsAmount1() throws Exception {
 
-        try {
-            String temp = makeHttpConnection("http://localhost:8084/smsSemProject/api/flights/2017-01-05/2017-01-05", "GET");
-            
-            JsonArray ja = new JsonParser().parse(temp).getAsJsonArray();
-            System.out.println("testAPIFlightsReservation() :" + ja.size());
-            assertTrue(ja.size() == 1);
-            
-        } catch (Exception ex) {
-            Logger.getLogger(RestAPITest.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        JsonArray ja;
 
+        String temp = makeHttpConnection("http://localhost:8084/smsSemProject/api/flights/CPH/1294182000000", "GET");
 
+        ja = new JsonParser().parse(temp).getAsJsonArray();
+        //System.out.println("testAPIFlightsReservation() :" + ja.size());
+
+        assertTrue(ja.size() == 1);
     }
 
     private String makeHttpConnection(String url, String method) throws Exception {
@@ -194,8 +185,8 @@ public class RestAPITest {
 
         int responseCode = con.getResponseCode();
 
-        System.out.println("SENDING GET REQUEST TO URL: " + url);
-        System.out.println("RESPONSE CODE: " + responseCode);
+        //System.out.println("SENDING GET REQUEST TO URL: " + url);
+        //System.out.println("RESPONSE CODE: " + responseCode);
 
         BufferedReader in = new BufferedReader(
                 new InputStreamReader(con.getInputStream()));
@@ -211,10 +202,6 @@ public class RestAPITest {
     }
 
     private void setUpData() {
-        
-        
-        
-        
 
     }
 
