@@ -5,7 +5,10 @@
  */
 package datalayer;
 
+import entity.exceptions.FlightNotFoundException;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -13,11 +16,15 @@ import java.util.Date;
  */
 public class dbTester {
     
-    public static void main(String[] args) {
+    public static void main(String[] args) throws FlightNotFoundException {
         
         DBFacade dbf = DBFacade.getInstance();
         
-      System.out.println(dbf.getFlightsByDates("CPH", "1483574400000"));
+        try {
+            System.out.println(dbf.getFlightsByDates("CPH", "1483574400000"));
+        } catch (FlightNotFoundException ex) {
+            Logger.getLogger(dbTester.class.getName()).log(Level.SEVERE, null, ex);
+        }
 //        
       System.out.println(dbf.getFligtsByDatesAndAirpots("CPH", "SND", "1483574400000"));
 //        

@@ -15,12 +15,14 @@ import entity.Customer;
 import entity.FlightInstance;
 import entity.Reservation;
 import entity.Seat;
+import entity.exceptions.FlightNotFoundException;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.TimeZone;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.persistence.EntityManager;
@@ -54,33 +56,29 @@ public class DBFacade implements DBFacadeInterface {
     }
 
     @Override
-    public String getFlightsByDates(String startAirport, String startDate) {
-        long milidate = Long.parseLong(startDate);
+    public String getFlightsByDates(String startAirport, String startDate) throws FlightNotFoundException {
+        long openshit = 86400000L;
 
-        Date date = new Date(milidate);
+        Date date = null;
 
-        DateFormat df = new SimpleDateFormat(
-                "yyyy-mm-dd");
+        DateFormat df = new SimpleDateFormat("yyyy-mm-dd");
 
-        System.out.println(df.format(date));
-        Date test = new Date();
+        df.setTimeZone(TimeZone.getTimeZone("CET"));
         try {
-            test = df.parse(df.format(date));
+            date = df.parse(df.format(new Date(Long.parseLong(startDate) + openshit)));
         } catch (ParseException ex) {
             Logger.getLogger(DBFacade.class.getName()).log(Level.SEVERE, null, ex);
         }
-
-        //Start airport
-        Query q1 = em.createNamedQuery("Airport.findAirportByCode");
+        Query q1 = this.em.createNamedQuery("Airport.findAirportByCode");
 
         q1.setParameter("code", startAirport);
 
         Airport startAir = (Airport) q1.getSingleResult();
 
-        System.out.println("date test " + test);
+        System.out.println("date test " + date);
 
         Query q = em.createNamedQuery("FlightInstance.findByDates");
-        q.setParameter("startDate", test, TemporalType.DATE);
+        q.setParameter("startDate", date, TemporalType.DATE);
         q.setParameter("startAirport", startAir);
 
         List<FlightInstance> fInstanceList = (List<FlightInstance>) q.getResultList();
@@ -101,11 +99,24 @@ public class DBFacade implements DBFacadeInterface {
             jsonList.add(jo);
         }
 
+        System.out.println(jsonList.size());
+        if (jsonList.size() == 0) {
+            throw new FlightNotFoundException("No availaible flights from: " + startAirport + " on " + date);
+        }
+
         return gson.toJson(jsonList);
     }
 
+    /**
+     *
+     * @param startAirport
+     * @param endAirport
+     * @param startDate
+     * @return
+     * @throws FlightNotFoundException
+     */
     @Override
-    public String getFligtsByDatesAndAirpots(String startAirport, String endAirport, String startDate) {
+    public String getFligtsByDatesAndAirpots(String startAirport, String endAirport, String startDate) throws FlightNotFoundException {
         //Start airport
         Query q1 = em.createNamedQuery("Airport.findAirportByCode");
 
@@ -159,6 +170,10 @@ public class DBFacade implements DBFacadeInterface {
             jsonList.add(jo);
         }
 
+        if (jsonList.size() == 0) {
+            throw new FlightNotFoundException("No availaible flights from: " + startAirport + " on " + startDate);
+        }
+
         return gson.toJson(jsonList);
     }
 
@@ -192,7 +207,7 @@ public class DBFacade implements DBFacadeInterface {
         reservationJo.addProperty("reservationID", reservation.getId());
         reservationJo.addProperty("flightID", fInstance.getId());//FlightID or flightinstanceID?
         reservationJo.add("Passengers", passengers);
-        reservationJo.addProperty("totalPrice", fInstance.getPrice()*passengers.size());
+        reservationJo.addProperty("totalPrice", fInstance.getPrice() * passengers.size());
         return reservationJo.toString();
     }
 
@@ -218,7 +233,7 @@ public class DBFacade implements DBFacadeInterface {
         reservationJo.addProperty("reservationID", reservation.getId());
         reservationJo.addProperty("flightID", reservation.getFlightInstance().getId());
         reservationJo.add("Passengers", passengerArray);
-        reservationJo.addProperty("totalPrice", reservation.getFlightInstance().getPrice()*passengerArray.size());
+        reservationJo.addProperty("totalPrice", reservation.getFlightInstance().getPrice() * passengerArray.size());
 
         return reservationJo.toString();
     }
