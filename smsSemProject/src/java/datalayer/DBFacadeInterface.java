@@ -5,6 +5,7 @@
  */
 package datalayer;
 
+import entity.exceptions.FlightNotFoundException;
 import java.util.Date;
 
 /**
@@ -12,10 +13,14 @@ import java.util.Date;
  * @author Søren
  */
 public interface DBFacadeInterface {
-    
-    public String getFlightsByDates(String startAirport, String startDate);
-    public String getFligtsByDatesAndAirpots(String startAiport, String endAiport, String startDate);
+
+    public String getFlightsByDates(String startAirport, String startDate) throws FlightNotFoundException;
+
+    public String getFligtsByDatesAndAirpots(String startAiport, String endAiport, String startDate) throws FlightNotFoundException;
+
     public String flightReservation(String JSONReservationPayload, String flightId);
+
     public String getReservation(String reservationID);
+
     public String deleteReservationById(String reservationID);
 }

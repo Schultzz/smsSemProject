@@ -6,6 +6,9 @@
 package rest;
 
 import datalayer.DBFacade;
+import entity.exceptions.FlightNotFoundException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.PathParam;
@@ -41,13 +44,16 @@ public class Rest {
      * @param sAirport
      * @param date
      * @return an JSON object with all the flighs found
+     * @throws entity.exceptions.FlightNotFoundException
      */
     @GET
     @Produces("application/json")
     @Path("/{startAirport}/{date}")
-    public String getAllFlights(@PathParam("startAirport") String sAirport, @PathParam("date") String date) {
-        //Date format:  "yyyy.mm.dd"
-        return dbf.getFlightsByDates(sAirport, date);
+    public String getAllFlights(@PathParam("startAirport") String sAirport, @PathParam("date") String date) throws FlightNotFoundException {
+
+            //Date format:  "yyyy.mm.dd"
+            return dbf.getFlightsByDates(sAirport, date);
+
     }
 
     /**
@@ -56,14 +62,14 @@ public class Rest {
      * @param startAirport
      * @param endAirport
      * @param sDate
-     * @param eDate
      * @return an JSON object with all the flighs found
+     * @throws entity.exceptions.FlightNotFoundException
      */
     @GET
     @Produces("application/json")
     @Path("/{startAirport}/{endAirport}/{sDate}")
     public String getAllFlightsFromRoutes(@PathParam("startAirport") String startAirport,
-            @PathParam("endAirport") String endAirport, @PathParam("sDate") String sDate) {
+            @PathParam("endAirport") String endAirport, @PathParam("sDate") String sDate) throws FlightNotFoundException {
         //Date format:  "yyyy.mm.dd"
         //Airport codes are made uppercase to match the database
         return dbf.getFligtsByDatesAndAirpots(startAirport.toUpperCase(), endAirport.toUpperCase(), sDate);
